@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fathom NOC Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Fathom NOC</h1>
+    <p>Maritime Network Operations Center — Live Security Monitoring</p>
+    <div id="status">Checking backend status...</div>
+  </header>
 
+  <main>
+    <section id="summary">
+      <div class="card">
+        <h3>Total Events Scanned</h3>
+        <p id="totalEvents">--</p>
+      </div>
+      <div class="card">
+        <h3>Alerts Found</h3>
+        <p id="totalAlerts">--</p>
+      </div>
+      <button id="refreshBtn">Refresh Scan</button>
+    </section>
+
+    <section id="alertsSection">
+      <h2>Active Alerts</h2>
+      <div id="alertsList">
+        <p>No scan run yet. Click "Refresh Scan" to check the network.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
