@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+import os
 from flask_cors import CORS
 from mock_data import generate_batch
 from detection_rules import scan_events
@@ -35,5 +36,4 @@ def get_status():
     """
     return jsonify({"status": "online", "service": "Fathom NOC Backend"})
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=False)
