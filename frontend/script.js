@@ -1,6 +1,7 @@
 const API_BASE = window.FATHOM_API_BASE || "https://fathom-noc.onrender.com";
 
 const statusEl = document.getElementById("status");
+const lastScanEl = document.getElementById("lastScan");
 const totalEventsEl = document.getElementById("totalEvents");
 const totalAlertsEl = document.getElementById("totalAlerts");
 const criticalAlertsEl = document.getElementById("criticalAlerts");
@@ -14,6 +15,12 @@ function createTextElement(tag, className, text) {
   if (className) element.className = className;
   element.textContent = text;
   return element;
+}
+
+function formatScanTime(timestamp) {
+  if (!timestamp) return "No scan run yet";
+  const date = new Date(timestamp);
+  return Number.isNaN(date.getTime()) ? "Scan time unavailable" : "Last scan: " + date.toLocaleString();
 }
 
 function formatTimestamp(timestamp) {
@@ -76,6 +83,7 @@ async function runScan() {
   try {
     const data = await fetchJson("/api/scan", { method: "POST" });
     totalEventsEl.textContent = data.total_events_scanned;
+    lastScanEl.textContent = formatScanTime(data.generated_at);
     totalAlertsEl.textContent = data.alerts_found;
 
     const counts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0 };
@@ -89,6 +97,7 @@ async function runScan() {
 
     renderAlerts(data.alerts);
   } catch (err) {
+    lastScanEl.textContent = "Scan failed — check backend connection";
     alertsListEl.replaceChildren(
       createTextElement("p", "error", "Could not reach backend. Check the server and try again.")
     );
