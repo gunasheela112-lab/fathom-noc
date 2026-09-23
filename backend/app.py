@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from datetime import datetime, timezone
 import os
 from flask_cors import CORS
 from mock_data import generate_batch
@@ -19,6 +20,7 @@ def run_scan():
     latest_scan = {
         "total_events_scanned": len(events),
         "alerts_found": len(alerts),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "events": events,
         "alerts": alerts,
     }
@@ -41,6 +43,7 @@ def get_alerts():
     return jsonify({
         "total_events_scanned": latest_scan["total_events_scanned"],
         "alerts_found": latest_scan["alerts_found"],
+        "generated_at": latest_scan["generated_at"],
         "alerts": latest_scan["alerts"],
     })
 
