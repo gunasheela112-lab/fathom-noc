@@ -2,33 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fathom NOC maritime network security monitoring dashboard">
   <title>Fathom NOC Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <h1>Fathom NOC</h1>
-    <p>Maritime Network Operations Center — Live Security Monitoring</p>
-    <div id="status">Checking backend status...</div>
+    <p>Maritime Network Operations Center — Simulated Security Monitoring</p>
+    <div id="status" role="status" aria-live="polite">Checking backend status...</div>
   </header>
 
   <main>
-    <section id="summary">
-      <div class="card">
-        <h3>Total Events Scanned</h3>
-        <p id="totalEvents">--</p>
-      </div>
-      <div class="card">
-        <h3>Alerts Found</h3>
-        <p id="totalAlerts">--</p>
-      </div>
-      <button id="refreshBtn">Refresh Scan</button>
+    <section id="summary" aria-label="Network scan summary">
+      <div class="card"><h3>Total Events Scanned</h3><p id="totalEvents">--</p></div>
+      <div class="card"><h3>Alerts Found</h3><p id="totalAlerts">--</p></div>
+      <div class="card severity-card critical"><h3>Critical</h3><p id="criticalAlerts">--</p></div>
+      <div class="card severity-card high"><h3>High</h3><p id="highAlerts">--</p></div>
+      <div class="card severity-card medium"><h3>Medium</h3><p id="mediumAlerts">--</p></div>
+      <button id="refreshBtn" type="button">Run New Scan</button>
     </section>
 
-    <section id="alertsSection">
-      <h2>Active Alerts</h2>
-      <div id="alertsList">
-        <p>No scan run yet. Click "Refresh Scan" to check the network.</p>
+    <section id="alertsSection" aria-labelledby="alertsHeading">
+      <h2 id="alertsHeading">Active Alerts</h2>
+      <div id="alertsList" aria-live="polite">
+        <p>No scan run yet. Click "Run New Scan" to check the network.</p>
       </div>
     </section>
   </main>
