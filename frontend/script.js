@@ -1,52 +1,100 @@
-const API_BASE = "https://fathom-noc.onrender.com";
+const API_BASE = window.FATHOM_API_BASE || "https://fathom-noc.onrender.com";
 
 const statusEl = document.getElementById("status");
 const totalEventsEl = document.getElementById("totalEvents");
 const totalAlertsEl = document.getElementById("totalAlerts");
+const criticalAlertsEl = document.getElementById("criticalAlerts");
+const highAlertsEl = document.getElementById("highAlerts");
+const mediumAlertsEl = document.getElementById("mediumAlerts");
 const alertsListEl = document.getElementById("alertsList");
 const refreshBtn = document.getElementById("refreshBtn");
 
+function createTextElement(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  element.textContent = text;
+  return element;
+}
+
+function formatTimestamp(timestamp) {
+  if (!timestamp) return "Unknown time";
+  const date = new Date(timestamp * 1000);
+  return Number.isNaN(date.getTime()) ? "Unknown time" : date.toLocaleTimeString();
+}
+
+function renderAlerts(alerts) {
+  alertsListEl.replaceChildren();
+
+  if (alerts.length === 0) {
+    alertsListEl.appendChild(createTextElement("p", null, "No suspicious activity detected."));
+    return;
+  }
+
+  alerts.forEach(alert => {
+    const item = createTextElement("article", "alert-item " + alert.priority);
+    const top = createTextElement("div", "alert-top");
+    top.append(
+      createTextElement("span", null, alert.priority + " — " + alert.zone),
+      createTextElement("span", "alert-score", "Score: " + alert.score)
+    );
+
+    const details = createTextElement("div", "alert-details");
+    details.append(
+      createTextElement("span", null, "Device: " + alert.device),
+      createTextElement("span", null, "Source: " + alert.source_ip),
+      createTextElement("span", null, formatTimestamp(alert.timestamp))
+    );
+
+    const reasons = createTextElement("div", "alert-reasons", alert.reasons.join(", "));
+    item.append(top, details, reasons);
+    alertsListEl.appendChild(item);
+  });
+}
+
+async function fetchJson(path, options = {}) {
+  const res = await fetch(API_BASE + path, options);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+}
+
 async function checkStatus() {
   try {
-    const res = await fetch(`${API_BASE}/api/status`);
-    const data = await res.json();
-    statusEl.textContent = `Backend online: ${data.service}`;
-    statusEl.style.color = "#4caf50";
+    const data = await fetchJson("/api/status");
+    statusEl.textContent = "Backend online: " + data.service;
+    statusEl.className = "online";
   } catch (err) {
     statusEl.textContent = "Backend offline — start the Flask server";
-    statusEl.style.color = "#f44336";
+    statusEl.className = "offline";
   }
 }
 
 async function runScan() {
-  alertsListEl.innerHTML = "<p>Scanning network...</p>";
-  try {
-    const res = await fetch(`${API_BASE}/api/alerts`);
-    const data = await res.json();
+  refreshBtn.disabled = true;
+  refreshBtn.textContent = "Scanning...";
+  alertsListEl.replaceChildren(createTextElement("p", null, "Scanning network..."));
 
+  try {
+    const data = await fetchJson("/api/scan", { method: "POST" });
     totalEventsEl.textContent = data.total_events_scanned;
     totalAlertsEl.textContent = data.alerts_found;
 
-    if (data.alerts.length === 0) {
-      alertsListEl.innerHTML = "<p>No suspicious activity detected.</p>";
-      return;
-    }
-
-    alertsListEl.innerHTML = "";
+    const counts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0 };
     data.alerts.forEach(alert => {
-      const div = document.createElement("div");
-      div.className = `alert-item ${alert.priority}`;
-      div.innerHTML = `
-        <div class="alert-top">
-          <span>${alert.priority} — ${alert.zone}</span>
-          <span>${alert.device}</span>
-        </div>
-        <div class="alert-reasons">${alert.reasons.join(", ")}</div>
-      `;
-      alertsListEl.appendChild(div);
+      if (counts[alert.priority] !== undefined) counts[alert.priority]++;
     });
+
+    criticalAlertsEl.textContent = counts.CRITICAL;
+    highAlertsEl.textContent = counts.HIGH;
+    mediumAlertsEl.textContent = counts.MEDIUM;
+
+    renderAlerts(data.alerts);
   } catch (err) {
-    alertsListEl.innerHTML = "<p>Could not reach backend. Is the Flask server running?</p>";
+    alertsListEl.replaceChildren(
+      createTextElement("p", "error", "Could not reach backend. Check the server and try again.")
+    );
+  } finally {
+    refreshBtn.disabled = false;
+    refreshBtn.textContent = "Run New Scan";
   }
 }
 
