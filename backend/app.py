@@ -55,6 +55,7 @@ def create_scan():
     return jsonify({
         "total_events_scanned": scan["total_events_scanned"],
         "alerts_found": scan["alerts_found"],
+        "generated_at": scan["generated_at"],
         "alerts": scan["alerts"],
     })
 
