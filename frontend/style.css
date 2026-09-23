@@ -19,8 +19,9 @@ header p { color: #9fc5e8; margin-top: 5px; font-size: 14px; }
 #status { margin-top: 10px; font-size: 13px; }
 #status.online { color: #4caf50; }
 #status.offline { color: #f44336; }
+.last-scan { margin-top: 6px; font-size: 12px; color: #7fa9c9; }
 
-main { padding: 20px; max-width: 1000px; margin: 0 auto; }
+main { padding: 24px 20px 40px; max-width: 1000px; margin: 0 auto; }
 
 #summary {
   display: flex;
@@ -32,6 +33,7 @@ main { padding: 20px; max-width: 1000px; margin: 0 auto; }
 
 .card {
   background-color: #123a52;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
   padding: 15px 20px;
   border-radius: 8px;
   flex: 1 1 150px;
@@ -63,6 +65,9 @@ main { padding: 20px; max-width: 1000px; margin: 0 auto; }
 #refreshBtn:disabled { opacity: 0.65; cursor: wait; }
 
 #alertsSection h2 { margin-bottom: 15px; color: #ffffff; }
+#alertsList { min-height: 80px; }
+.alert-item { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); transition: transform 0.15s ease, border-color 0.15s ease; }
+.alert-item:hover { transform: translateY(-1px); }
 
 .alert-item {
   background-color: #1a2f42;
@@ -98,6 +103,12 @@ main { padding: 20px; max-width: 1000px; margin: 0 auto; }
 .error { color: #ff8a80; }
 
 @media (max-width: 600px) {
+  header { padding: 18px 14px; }
+  header h1 { font-size: 25px; }
+  #summary { gap: 10px; }
+  .card { min-width: 125px; padding: 14px; }
+  #refreshBtn { width: 100%; }
+
   main { padding: 14px; }
   .alert-item .alert-top { align-items: flex-start; flex-direction: column; }
 }
