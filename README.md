@@ -8,6 +8,10 @@ A lightweight maritime Network Operations Center dashboard that simulates shipbo
 
 **[Open the deployed Fathom NOC Dashboard](https://fathom-noc-dashboard.onrender.com)**
 
+## Dashboard Preview
+
+![Fathom NOC Dashboard](fathom-noc-dashboard.png)
+
 The frontend is deployed as a Render Static Site and connects to the deployed Flask backend.
 
 ## Overview
