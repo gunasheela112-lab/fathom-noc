@@ -1,39 +1,39 @@
-# Zone risk weights - same suspicious activity is scored differently by zone
+# Detection thresholds
+FAILED_LOGIN_THRESHOLD = 5
+BYTES_SENT_THRESHOLD = 300_000
+CONNECTION_ATTEMPT_THRESHOLD = 30
+
+# Zone risk weights - the same suspicious activity is scored differently by zone.
 ZONE_RISK_WEIGHT = {
     "Guest_WiFi": 1,
     "Crew_Systems": 2,
     "POS_Payment": 4,
-    "Bridge_Adjacent_IT": 5
+    "Bridge_Adjacent_IT": 5,
 }
 
+
 def evaluate_event(event):
-    """
-    Looks at one network event and decides if it's suspicious.
-    Returns an alert dict if something looks wrong, otherwise None.
-    """
+    """Evaluate one simulated network event and return an alert when suspicious."""
     reasons = []
     severity_score = 0
 
-    # Rule 1: Too many failed logins = possible brute-force attack
-    if event["failed_logins"] >= 5:
+    if event.get("failed_logins", 0) >= FAILED_LOGIN_THRESHOLD:
         reasons.append("High number of failed login attempts")
         severity_score += 3
 
-    # Rule 2: Unusually high data sent = possible data exfiltration
-    if event["bytes_sent"] > 300000:
+    if event.get("bytes_sent", 0) > BYTES_SENT_THRESHOLD:
         reasons.append("Unusually large data transfer")
         severity_score += 3
 
-    # Rule 3: Too many connection attempts = possible port scan
-    if event["connection_attempts"] > 30:
+    if event.get("connection_attempts", 0) > CONNECTION_ATTEMPT_THRESHOLD:
         reasons.append("High connection attempt rate (possible scan)")
         severity_score += 2
 
     if not reasons:
-        return None  # nothing suspicious
+        return None
 
-    # Apply zone risk weight - same issue is worse in sensitive zones
-    zone_weight = ZONE_RISK_WEIGHT.get(event["zone"], 1)
+    zone = event.get("zone", "Unknown")
+    zone_weight = ZONE_RISK_WEIGHT.get(zone, 1)
     final_score = severity_score * zone_weight
 
     if final_score >= 15:
@@ -43,26 +43,17 @@ def evaluate_event(event):
     else:
         priority = "MEDIUM"
 
-    alert = {
-        "timestamp": event["timestamp"],
-        "zone": event["zone"],
-        "device": event["device"],
-        "source_ip": event["source_ip"],
+    return {
+        "timestamp": event.get("timestamp"),
+        "zone": zone,
+        "device": event.get("device", "Unknown"),
+        "source_ip": event.get("source_ip", "Unknown"),
         "reasons": reasons,
         "priority": priority,
-        "score": final_score
+        "score": final_score,
     }
-    return alert
 
 
 def scan_events(events):
-    """
-    Runs evaluate_event on a whole batch of events.
-    Returns only the ones that triggered an alert.
-    """
-    alerts = []
-    for event in events:
-        alert = evaluate_event(event)
-        if alert:
-            alerts.append(alert)
-    return alerts
+    """Evaluate a batch of events and return only events that triggered alerts."""
+    return [alert for event in events if (alert := evaluate_event(event))]
