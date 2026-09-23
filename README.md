@@ -4,6 +4,12 @@ A lightweight maritime Network Operations Center dashboard that simulates shipbo
 
 > **Demo note:** Fathom NOC uses simulated network traffic. It is an educational security-monitoring prototype, not a live intrusion-detection system.
 
+## Live Demo
+
+**[Open the deployed Fathom NOC Dashboard](https://fathom-noc-dashboard.onrender.com)**
+
+The frontend is deployed as a Render Static Site and connects to the deployed Flask backend.
+
 ## Overview
 
 Shipboard IT operates across multiple network zones with different levels of operational sensitivity. Fathom NOC models that environment with four zones:
@@ -71,6 +77,8 @@ Each scan evaluates one coherent batch of 30 events. The API also records when t
 - **Frontend:** HTML, CSS, vanilla JavaScript
 - **Testing:** Python `unittest`
 - **Data:** simulated network events
+- **Deployment:** Render
+- **CI:** GitHub Actions
 
 The frontend deliberately avoids a framework to keep the dashboard lightweight and easy to deploy.
 
@@ -124,6 +132,7 @@ python -m unittest test_detection_rules.py
 - Frontend/backend integration
 - Defensive handling of API failures
 - Automated unit testing with GitHub Actions
+- Deployment of a frontend and backend as separate services
 - Clear separation between simulated data and a real production security system
 
 ## Limitations
