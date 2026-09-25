@@ -1,5 +1,12 @@
 # Fathom NOC 🌊
 
+
+![Python](https://img.shields.io/badge/Python-3.x-blue)
+![Flask](https://img.shields.io/badge/Flask-Backend-lightgrey)
+![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-yellow)
+![Deployment](https://img.shields.io/badge/Deployment-Render-purple)
+![CI](https://img.shields.io/github/actions/workflow/status/gunasheela112-lab/fathom-noc/tests.yml?branch=main&label=CI)
+
 A lightweight maritime Network Operations Center dashboard that simulates shipboard network activity and prioritizes suspicious events by rule-based detection and zone risk.
 
 > **Demo note:** Fathom NOC uses simulated network traffic. It is an educational security-monitoring prototype, not a live intrusion-detection system.
